@@ -17,12 +17,6 @@ public class WorkFlowInitiator {
 		// Build client
 		final ZeebeClient client = ZeebeClient.newClientBuilder().brokerContactPoint(BROKER_CONTACT).build();
 		System.out.println("Connected");
-		final WorkflowInstanceEvent createEvent = client.newCreateInstanceCommand().bpmnProcessId(name).latestVersion()
-				.send().join();
-		createEvent.getWorkflowInstanceKey();
-		// this is per version deployed
-		createEvent.getWorkflowKey();
-		createEvent.getVersion();
 		
 		//one level before opening worker from collect-money
 		client.newWorker().jobType("payment-service").handler((jobclient, activatedJob) -> {
@@ -97,7 +91,12 @@ public class WorkFlowInitiator {
 			// here goes my Payload from Service A!!!! fly fly fly
 		}).open();
 
-
+		final WorkflowInstanceEvent createEvent = client.newCreateInstanceCommand().bpmnProcessId(name).latestVersion()
+				.send().join();
+		createEvent.getWorkflowInstanceKey();
+		// this is per version deployed
+		createEvent.getWorkflowKey();
+		createEvent.getVersion();
 		
 		System.out.printf("WorkFlow of key: %d Instance ID : %d Version: %d ",
 				createEvent.getWorkflowKey(), createEvent.getWorkflowInstanceKey(), createEvent.getVersion());
